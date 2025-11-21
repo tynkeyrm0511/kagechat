@@ -65,7 +65,7 @@ npm run dev
 | POST | `/api/auth/signin` | Login user |
 
 ## 👨‍💻 Author
-Your Name
+Syntax Ngo
 
 ## 📝 License
 MIT
