@@ -1,11 +1,11 @@
 import bcrypt from "bcrypt";
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
-import crypto from 'crypto';
-import Session from '../models/Session.js';
+import crypto from "crypto";
+import Session from "../models/Session.js";
 
 const ACCRESS_TOKEN_TTL = "30m"; // thuong thi access token duoi 15 phut
-const REFRES_TOKEN_TTL = 14 * 24 * 60 * 60 * 1000; // 14 ngay
+const REFRESH_TOKEN_TTL = 14 * 24 * 60 * 60 * 1000; // 14 ngay
 
 export const signUp = async (req, res) => {
   try {
@@ -68,22 +68,46 @@ export const signIn = async (req, res) => {
       { expiresIn: ACCRESS_TOKEN_TTL }
     );
     //Tao refresh token
-    const refreshToken = crypto.randomBytes(64).toString('hex');
+    const refreshToken = crypto.randomBytes(64).toString("hex");
     //Tao session moi de luu refresh token
     await Session.create({
-        userId: user._id,
-        refreshToken,
-        expiresAt: new Date(Date.now() + REFRES_TOKEN_TTL),
+      userId: user._id,
+      refreshToken,
+      expiresAt: new Date(Date.now() + REFRESH_TOKEN_TTL),
     });
     //Tra refresh token ve trong cookie
-    res.cookie('refreshToken', refreshToken, {
-        httpOnly: true, // khong cho phep truy cap bang js
-        secure: true, // chi truy cap bang https
-        sameSite: 'none' // de fe va be deploy doc lap
-    })
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true, // khong cho phep truy cap bang js
+      secure: true, // chi truy cap bang https
+      sameSite: "none", // de fe va be deploy doc lap
+      maxAge: REFRESH_TOKEN_TTL
+    });
     //Tra accress token ve trong res
+    return res.status(200).json({
+      message: `Nguoi dung ${user.displayName} da dang nhap!`,
+      accessToken,
+    });
   } catch (error) {
     console.error("Loi khi goi signIn", error);
+    return res.status(500).json({ message: "Loi server" });
+  }
+};
+
+export const signOut = async (req, res) => {
+  try {
+    //Lay refresh token tu cookie cua nguoi dung
+    const token = req.cookies?.refreshToken;
+    if (token) {
+      //Xoa refresh token trong session(database)
+      await Session.deleteOne({ refreshToken: token });
+      //Xoa cookie
+      res.clearCookie("refreshToken");
+      return res.status(200).json({message: "Dang xuat thanh cong"})
+    }
+    //Tra ve status 204 -> Dang xuat thanh cong
+    return res.sendStatus(204);
+  } catch (error) {
+    console.error("Loi khi goi signOut", error);
     return res.status(500).json({ message: "Loi server" });
   }
 };
