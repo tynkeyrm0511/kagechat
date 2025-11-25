@@ -1,3 +1,7 @@
+# Project context - local documentation only
+PROJECT_CONTEXT.md
+DEVELOPMENT.md
+
 node_modules/
 .env
 !.env.example
