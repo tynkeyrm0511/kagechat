@@ -3,27 +3,34 @@ import dotenv from "dotenv";
 import { connectDB } from "./libs/db.js";
 import authRoute from "./routes/authRoute.js";
 import userRoute from "./routes/userRoute.js";
+import friendRoute from "./routes/friendRoute.js";
+import messageRoute from "./routes/messageRoute.js";
+import conversationRoute from "./routes/conversationRoute.js";
 import cookieParser from "cookie-parser";
 import { protectedRoute } from "./middlewares/authMiddleware.js";
-import cors from 'cors';
+import cors from "cors";
 
-dotenv.config();
+dotenv.config(); //Load bien moi truong
 
-const app = express();
-const PORT = process.env.PORT || 5001;
+const app = express(); //Khoi tao express app
+const PORT = process.env.PORT || 5001; //Port server
 
 //Middleware
-app.use(express.json());
-app.use(cookieParser());
-app.use(cors({origin: process.env.CLIENT_URL, credentials: true}))
+app.use(express.json()); //Body parser
+app.use(cookieParser()); //Cookie parser
+app.use(cors({ origin: process.env.CLIENT_URL, credentials: true })); //CORS
 //Public routes
-app.use("/api/auth", authRoute);
+app.use("/api/auth", authRoute); //Authentication
 //Private routes
 app.use(protectedRoute); //Authorization
-app.use("/api/users", userRoute);
-//Ket noi csdl
+app.use("/api/users", userRoute); //Profile
+app.use("/api/friends", friendRoute); //Friend
+app.use("/api/messages", messageRoute); //Message
+app.use("/api/conversations", conversationRoute); //Conversation
+
+//Ket noi DB va chay server
 connectDB().then(() => {
-  //Chay server
+  //Start server
   app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}...`);
   });

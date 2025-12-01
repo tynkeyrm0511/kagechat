@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import Session from "../models/Session.js";
 
-const ACCRESS_TOKEN_TTL = "10s"; // thuong thi access token duoi 15 phut
+const ACCRESS_TOKEN_TTL = "15m"; // thuong thi access token duoi 15 phut
 const REFRESH_TOKEN_TTL = 14 * 24 * 60 * 60 * 1000; // 14 ngay
 
 export const signUp = async (req, res) => {
@@ -23,6 +23,14 @@ export const signUp = async (req, res) => {
       return res
         .status(409)
         .json({ message: "Thong tin dang nhap khong chinh xac" });
+    }
+
+    //Kiem tra email da ton tai chua?
+    const emailExists = await User.findOne({email})
+    if(emailExists){
+      return res.status(409).json({
+        message: "Email da duoc su dung"
+      })
     }
     //Ma hoa password
     const passwordHash = await bcrypt.hash(password, 10); //salt = 10
