@@ -24,7 +24,7 @@ const ChatCard = ({
   leftSection,
   subtitle,
 }: ChatCardProps) => {
-  return;
+  return (
   <Card
     key={conversationId}
     className={cn(
@@ -58,7 +58,8 @@ const ChatCard = ({
         </div>
       </div>
     </div>
-  </Card>;
+  </Card>
+  );
 };
 
 export default ChatCard;

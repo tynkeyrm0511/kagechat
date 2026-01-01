@@ -24,9 +24,9 @@ export const checkExitstingFriendShip = async (req, res, next) => {
     }
     // Sắp xếp cặp ID người dùng
     if (recipientId) {
-      const [userA, userB] = pair(me, recipientId);
+      const [user1, user2] = pair(me, recipientId);
       // Kiểm tra trong cơ sở dữ liệu xem đã tồn tại mối quan hệ bạn bè chưa
-      const isFriend = await Friend.findOne({ user1: userA, user2: userB });
+      const isFriend = await Friend.findOne({ userA: user1, userB: user2 });
       if (!isFriend) {
         return res.status(404).json({
           message: "Chưa có mối quan hệ bạn bè giữa hai người dùng này",
@@ -35,13 +35,14 @@ export const checkExitstingFriendShip = async (req, res, next) => {
       // Nếu đã là bạn bè, tiếp tục đến middleware tiếp theo
       return next();
     }
-    const friendChecks = memberIds.map(async (memberIds) => {
-      const [userA, userB] = pair(me, memberIds);
+    const friendChecks = memberIds.map(async (memberId) => {
+      const memberIdStr = memberId.toString ? memberId.toString() : memberId;
+      const [user1, user2] = pair(me, memberIdStr);
       const isFriend = await Friend.findOne({
-        userA,
-        userB,
+        userA: user1,
+        userB: user2,
       });
-      return isFriend ? null : memberIds;
+      return isFriend ? null : memberIdStr;
     });
     const results = await Promise.all(friendChecks);
     const notFriends = results.filter(Boolean);
@@ -55,6 +56,7 @@ export const checkExitstingFriendShip = async (req, res, next) => {
     next();
   } catch (error) {
     console.error("Lỗi kiểm tra mối quan hệ bạn bè:", error);
+    console.error("Error stack:", error.stack);
     return res.status(500).json({
       message: "Lỗi máy chủ khi kiểm tra mối quan hệ bạn bè",
     });
