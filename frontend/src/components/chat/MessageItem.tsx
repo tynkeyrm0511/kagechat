@@ -90,7 +90,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
               )}
             >
               {lastMessageStatus}
-            </Badge>
+            </Badge>   
           )}
       </div>
     </div>
