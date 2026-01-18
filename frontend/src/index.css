@@ -294,6 +294,16 @@
     transition: var(--transition-smooth);
   }
 
+  /* Pulse ring for welcome */
+  .pulse-welcome {
+    @apply relative;
+  }
+
+  .pulse-welcome::before {
+    content: "";
+    @apply absolute inset-0 rounded-full bg-primary/30 animate-ping duration-[2000ms];
+  }
+
   /* Pulse ring for unread messages */
   .pulse-ring {
     @apply relative;
@@ -301,9 +311,8 @@
 
   .pulse-ring::before {
     content: "";
-    @apply absolute inset-0 rounded-full bg-primary/30 animate-ping duration-[2000ms];
+    @apply absolute inset-0 rounded-full bg-red-500 animate-ping duration-[2000ms];
   }
-
   /* Message bounce in animation */
   .message-bounce {
     animation: messageSlideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55)

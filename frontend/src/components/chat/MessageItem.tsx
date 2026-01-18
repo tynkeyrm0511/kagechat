@@ -34,7 +34,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
   return (
     <div
       className={cn(
-        "flex gap-2 message-bounce",
+        "flex gap-2 message-bounce mt-1",
         message.isOwn ? "justify-end" : "justify-start"
       )}
     >
@@ -50,6 +50,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
           )}
         </div>
       )}
+
       {/* Messages */}
       <div
         className={cn(

@@ -19,7 +19,6 @@ import GroupChatList from "../chat/GroupChatList";
 import AddFriendModal from "../chat/AddFriendModal";
 import DirectMessageList from "../chat/DirectMessageList";
 import { useThemeStore } from "@/stores/useThemeStore";
-import Signout from "../auth/Signout";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { NavUser } from "./nav-user";
 
@@ -40,15 +39,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <a href="#">
                 <div className="flex w-full items-center px-2 justify-between">
                   <h1 className="text-xl font-bold text-white">Kage Chat</h1>
-                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2">
                     <Sun className="size-4 text-white" />
                     <Switch
-                      className="data-[state=checked]:bg-background/80 hover:cursor-pointer"
+                      className="data-[state=checked]:bg-background/50 data-[state=unchecked]:bg-white/50 hover:cursor-pointer"
                       checked={isDark}
                       onCheckedChange={toggleTheme}
                     />
                     <Moon className="size-4 text-white" />
-                  </div>
+                    </div>
                 </div>
               </a>
             </SidebarMenuButton>

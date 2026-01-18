@@ -7,7 +7,7 @@ const ChatWelcomeScreen = () => {
       <ChatWindowHeader />
       <div className="flex bg-primary-foreground rounded-2xl flex-1 items-center justify-center">
         <div className="text-center">
-          <div className="size-24 mx-auto mb-6 bg-primary rounded-full flex items-center justify-center shadow-glow pulse-ring">
+          <div className="size-24 mx-auto mb-6 bg-primary rounded-full flex items-center justify-center shadow-glow pulse-welcome">
             <span className="text-3xl">💬</span>
           </div>
           <h2 className="text-2xl font-bold mb-2 bg-primary bg-clip-text text-transparent">

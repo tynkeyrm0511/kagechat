@@ -28,13 +28,13 @@ const ChatWindowLayout = () => {
   return (
     <SidebarInset className="flex flex-col h-full flex-1 overflow-hidden rounde-sm shadow-sm">
       {/* Header: avatar + name */}
-      <ChatWindowHeader />
+      <ChatWindowHeader chat={selectedConversation}/>
       {/* Body: Messages */}
       <div className="flex-1 overflow-auto bg-primary-foreground">
         <ChatWindowBody />
       </div>
       {/* Footer: input */}
-      <MessageInput />
+      <MessageInput selectedConversation={selectedConversation}/>
     </SidebarInset>
   );
 };
