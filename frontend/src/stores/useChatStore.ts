@@ -27,7 +27,6 @@ export const useChatStore = create<ChatState>()(
         set({ convoLoading: true });
         try {
           const conversations = await chatService.fetchConversations();
-          console.log("Fetched conversations:", conversations);
           set({ conversations });
         } catch (error) {
           console.error("Failed to fetch conversations:", error);
@@ -96,10 +95,9 @@ export const useChatStore = create<ChatState>()(
           console.error("Lỗi xảy ra khi gửi tin nhắn trực tiếp:", error);
         }
       },
-      
+
       sendGroupMessage: async (conversationId, content, imgUrl) => {
         try {
-
           await chatService.sendGroupMessage(conversationId, content, imgUrl);
 
           set((state) => ({
@@ -107,7 +105,6 @@ export const useChatStore = create<ChatState>()(
               c._id === conversationId ? { ...c, seenBy: [] } : c,
             ),
           }));
-
         } catch (error) {
           console.error("Lỗi xảy ra khi gửi tin nhắn nhóm:", error);
         }

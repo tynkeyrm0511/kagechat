@@ -2,10 +2,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import axios from "axios";
 
 const api = axios.create({
-  baseURL:
-    import.meta.env.MODE === "development"
-      ? "http://localhost:5001/api"
-      : "/api",
+  baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
 });
 
@@ -52,7 +49,6 @@ api.interceptors.response.use(
 
     // Nếu lỗi 401 (Unauthorized) và chưa retry
     if (error.response?.status === 401 && !originalRequest._retry) {
-      
       // Nếu đang refresh, cho vào queue chờ
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
@@ -70,9 +66,13 @@ api.interceptors.response.use(
 
       try {
         // Gọi API refresh token
-        const res = await api.post("/auth/refresh", {}, { withCredentials: true });
+        const res = await api.post(
+          "/auth/refresh",
+          {},
+          { withCredentials: true },
+        );
         const newAccessToken = res.data.accessToken;
-        
+
         // Cập nhật token mới vào store
         useAuthStore.getState().setAccessToken(newAccessToken);
 
@@ -82,7 +82,6 @@ api.interceptors.response.use(
         // Retry request ban đầu với token mới
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`; // ✅ Sửa: header → headers
         return api(originalRequest);
-        
       } catch (refreshError) {
         // Refresh thất bại → Đăng xuất user
         processQueue(refreshError as Error, null);
@@ -95,7 +94,7 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

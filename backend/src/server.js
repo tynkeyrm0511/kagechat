@@ -9,10 +9,10 @@ import conversationRoute from "./routes/conversationRoute.js";
 import cookieParser from "cookie-parser";
 import { protectedRoute } from "./middlewares/authMiddleware.js";
 import cors from "cors";
+import { app, server } from "./socket/index.js";
 
 dotenv.config(); //Load bien moi truong
 
-const app = express(); //Khoi tao express app
 const PORT = process.env.PORT || 5001; //Port server
 
 //Middleware
@@ -31,7 +31,7 @@ app.use("/api/conversations", conversationRoute); //Conversation
 //Ket noi DB va chay server
 connectDB().then(() => {
   //Start server
-  app.listen(PORT, () => {
+  server.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}...`);
   });
 });
