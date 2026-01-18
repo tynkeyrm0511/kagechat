@@ -9,7 +9,7 @@ export interface AuthState {
   user: User | null;
 
   loading: boolean;
-  
+
   signUp: (
     username: string,
     password: string,
@@ -84,8 +84,10 @@ export interface ChatState {
 // Socket State
 export interface SocketState {
   socket: Socket | null;
+  
+  onlineUsers: string[];
 
   connectSocket: () => void;
-  
+
   disconnectSocket: () => void;
 }

@@ -1,5 +1,6 @@
-import express from "express";
 import dotenv from "dotenv";
+dotenv.config();
+import express from "express";
 import { connectDB } from "./libs/db.js";
 import authRoute from "./routes/authRoute.js";
 import userRoute from "./routes/userRoute.js";
@@ -10,8 +11,6 @@ import cookieParser from "cookie-parser";
 import { protectedRoute } from "./middlewares/authMiddleware.js";
 import cors from "cors";
 import { app, server } from "./socket/index.js";
-
-dotenv.config(); //Load bien moi truong
 
 const PORT = process.env.PORT || 5001; //Port server
 
