@@ -1,6 +1,7 @@
 import { Server } from "socket.io";
 import http from "http";
 import express from "express";
+import { socketMiddleware } from "../middlewares/socketMiddleware.js";
 
 const app = express();
 
@@ -13,8 +14,12 @@ const io = new Server(server, {
   },
 });
 
+io.use(socketMiddleware);
+
 io.on("connection", async (socket) => {
-  console.log(`Socket connected: ${socket.id}`);
+  const user = socket.user;
+
+  console.log(`${user.displayName} online with socket ${socket.id}`);
 
   socket.on("disconnect", () => {
     console.log(`Socket disconnected: ${socket.id}`);
