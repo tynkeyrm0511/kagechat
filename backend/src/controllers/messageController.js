@@ -1,6 +1,10 @@
 import Conversation from "../models/Conversation.js";
 import Message from "../models/Message.js";
-import { updateConversationAfterMessage } from "../utils/messageHelper.js";
+import { io } from "../socket/index.js";
+import {
+  emitNewMessage,
+  updateConversationAfterMessage,
+} from "../utils/messageHelper.js";
 
 export const sendDirectMessage = async (req, res) => {
   try {
@@ -43,9 +47,15 @@ export const sendDirectMessage = async (req, res) => {
       senderId,
       content,
     });
+
     //Cập nhật cuộc trò chuyện sau khi gửi tin nhắn
     updateConversationAfterMessage(conversation, message, senderId);
-    await conversation.save(); //Lưu cuộc trò chuyện
+
+    //Lưu cuộc trò chuyện
+    await conversation.save();
+
+    //Phát sự kiện tin nhắn mới đến người nhận
+    emitNewMessage(io, conversation, message);
 
     //Trả về phản hồi
     return res.status(201).json({ message });
@@ -60,8 +70,10 @@ export const sendGroupMessage = async (req, res) => {
   try {
     //Lấy dữ liệu từ req.body
     const { conversationId, content } = req.body;
+
     //Lấy userId từ req.user đã được middleware auth gán vào
     const senderId = req.user._id;
+    
     //Lấy cuộc trò chuyện từ middleware
     const conversation = req.conversation;
 
@@ -81,8 +93,13 @@ export const sendGroupMessage = async (req, res) => {
 
     //Cập nhật cuộc trò chuyện sau khi gửi tin nhắn
     updateConversationAfterMessage(conversation, message, senderId);
+
     //Lưu cuộc trò chuyện
     await conversation.save();
+
+    //Phát sự kiện tin nhắn mới đến các thành viên trong cuộc trò chuyện
+    emitNewMessage(io, conversation, message);
+
     //Trả về phản hồi
     return res.status(201).json({ message });
   } catch (error) {

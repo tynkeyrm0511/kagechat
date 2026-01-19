@@ -1,7 +1,7 @@
 export const updateConversationAfterMessage = (
   conversation,
   message,
-  senderId
+  senderId,
 ) => {
   //Cập nhật thông tin cuộc trò chuyện
   conversation.set({
@@ -24,5 +24,18 @@ export const updateConversationAfterMessage = (
     const isSender = memberId === senderId.toString(); // So sánh dưới dạng chuỗi để tránh lỗi ObjectId
     const prevCount = conversation.unreadCounts.get(memberId) || 0; // Lấy số tin nhắn chưa đọc hiện tại hoặc 0 nếu chưa có
     conversation.unreadCounts.set(memberId, isSender ? 0 : prevCount + 1); // Cập nhật số tin nhắn chưa đọc
+  });
+};
+
+// Phát sự kiện tin nhắn mới đến các thành viên trong cuộc trò chuyện
+export const emitNewMessage = (io, conversation, message) => {
+  io.to(conversation._id.toString()).emit("new-message", {
+    message,
+    conversation: {
+      _id: conversation._id,
+      lastMessage: conversation.lastMessage,
+      lastMessageAt: conversation.lastMessageAt,
+      unreadCounts: conversation.unreadCounts,
+    },
   });
 };

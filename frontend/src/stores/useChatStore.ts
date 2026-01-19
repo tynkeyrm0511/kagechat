@@ -14,6 +14,7 @@ export const useChatStore = create<ChatState>()(
       messageLoading: false, //message loading
 
       setActiveConversationId: (id) => set({ activeConversationId: id }),
+
       reset: () => {
         set({
           conversations: [],
@@ -23,6 +24,7 @@ export const useChatStore = create<ChatState>()(
           messageLoading: false,
         });
       },
+
       fetchConversations: async () => {
         set({ convoLoading: true });
         try {
@@ -34,6 +36,7 @@ export const useChatStore = create<ChatState>()(
           set({ convoLoading: false });
         }
       },
+
       fetchMessages: async (conversationId) => {
         const { activeConversationId, messages } = get();
         const { user } = useAuthStore.getState();
@@ -75,6 +78,7 @@ export const useChatStore = create<ChatState>()(
           set({ messageLoading: false });
         }
       },
+
       sendDirectMessage: async (recipientId, content, imgUrl) => {
         try {
           const { activeConversationId } = get();
@@ -108,6 +112,51 @@ export const useChatStore = create<ChatState>()(
         } catch (error) {
           console.error("Lỗi xảy ra khi gửi tin nhắn nhóm:", error);
         }
+      },
+
+      addMessage: async (message) => {
+        try {
+          const { user } = useAuthStore.getState();
+          const { fetchMessages } = get();
+
+          message.isOwn = message.senderId === user?._id;
+
+          const conversationId = message.conversationId;
+
+          let prevItems = get().messages[conversationId]?.items || [];
+
+          if (prevItems.length === 0) {
+            await fetchMessages(message.conversationId);
+            prevItems = get().messages[conversationId]?.items || [];
+          }
+
+          set((state) => {
+            if (prevItems.some((msg) => msg._id === message._id)) {
+              return state;
+            }
+            return {
+              messages: {
+                ...state.messages,
+                [conversationId]: {
+                  items: [...prevItems, message],
+                  hasMore: state.messages[conversationId].hasMore,
+                  nextCursor:
+                    state.messages[conversationId].nextCursor ?? null,
+                },
+              },
+            };
+          });
+        } catch (error) {
+          console.error("Lỗi xảy ra khi thêm tin nhắn:", error);
+        }
+      },
+
+      updateConversation: (conversation) => {
+        set((state) => ({
+          conversations: state.conversations.map((c) =>
+            c._id === conversation._id ? { ...c, ...conversation } : c,
+          ),
+        }));
       },
     }),
     {

@@ -31,6 +31,7 @@ export interface AuthState {
   setAccessToken: (accessToken: string) => void;
 }
 
+// Theme State
 export interface ThemeState {
   isDark: boolean;
 
@@ -39,6 +40,7 @@ export interface ThemeState {
   setTheme: (dark: boolean) => void;
 }
 
+// Chat State
 export interface ChatState {
   conversations: Conversation[];
 
@@ -79,6 +81,12 @@ export interface ChatState {
     content: string,
     imgUrl?: string,
   ) => Promise<void>;
+
+  // Add message
+  addMessage: (message: Message) => void;
+
+  // Update conversation
+  updateConversation: (conversation: Conversation) => void;
 }
 
 // Socket State
