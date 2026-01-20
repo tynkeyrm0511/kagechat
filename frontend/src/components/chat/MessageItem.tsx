@@ -10,7 +10,7 @@ interface MessageItemProps {
   index: number;
   messages: Message[];
   selectedConversation: Conversation;
-  lastMessageStatus: "delivered" | "seen";
+  lastMessageStatus: "Đã gửi" | "Đã xem";
 }
 
 const MessageItem: React.FC<MessageItemProps> = ({
@@ -85,7 +85,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
               variant="outline"
               className={cn(
                 "text-xs px-1.5 py-0.5 h-4 border-0",
-                lastMessageStatus === "seen"
+                lastMessageStatus === "Đã xem"
                   ? "bg-primary/20 text-primary"
                   : "bg-muted text-muted-foreground"
               )}

@@ -1,5 +1,6 @@
 import Conversation from "../models/Conversation.js";
 import Message from "../models/Message.js";
+import { io } from "../socket/index.js";
 
 export const createConversation = async (req, res) => {
   try {
@@ -200,5 +201,64 @@ export const getUserConversationsForSocketIO = async (userId) => {
   } catch (error) {
     console.error("Lỗi khi lấy conversation cho Socket.IO:", error);
     return [];
+  }
+};
+
+export const markAsSeen = async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+    const userId = req.user._id.toString();
+
+    const conversation = await Conversation.findById(conversationId).lean();
+
+    if (!conversation) {
+      return res.status(404).json({ message: "Cuộc trò chuyện không tồn tại" });
+    }
+
+    const last = conversation.lastMessage;
+    if (!last) {
+      return res.status(200).json({ message: "Không có tin nhắn để đánh dấu" });
+    }
+
+    if (last.senderId.toString() === userId) {
+      return res
+        .status(200)
+        .json({ message: "Người gửi không cần đánh dấu đã xem" });
+    }
+
+    const updated = await Conversation.findByIdAndUpdate(
+      conversationId,
+      {
+        $addToSet: { seenBy: userId },
+        $set: { [`unreadCounts.${userId}`]: 0 },
+      },
+      {
+        new: true,
+      },
+    )
+      .populate({
+        path: "seenBy",
+        select: "displayName avatarUrl",
+      })
+      .populate({
+        path: "lastMessage.senderId",
+        select: "displayName avatarUrl",
+      });
+
+    io.to(conversationId).emit("read-message", {
+      conversation: updated,
+      lastMessage: updated.lastMessage,
+    });
+
+    return res.status(200).json({
+      message: "Đã đánh dấu đã xem tin nhắn",
+      seenBy: updated.seenBy || [],
+      myUnreadCount: updated?.unreadCounts.get(userId) || 0,
+    });
+  } catch (error) {
+    console.error("Lỗi khi đánh dấu đã xem tin nhắn:", error);
+    return res.status(500).json({
+      message: "Lỗi server",
+    });
   }
 };
