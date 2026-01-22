@@ -18,8 +18,9 @@ export const useAuthStore = create<AuthState>()(
 
       clearState: () => {
         set({ accessToken: null, user: null, loading: false });
-        localStorage.clear();
         useChatStore.getState().reset();
+        localStorage.clear();
+        sessionStorage.clear();
       },
 
       signUp: async (username, password, email, firstName, lastName) => {
@@ -30,10 +31,10 @@ export const useAuthStore = create<AuthState>()(
             password,
             email,
             firstName,
-            lastName
+            lastName,
           );
           toast.success(
-            "Đăng ký thành công! Bạn sẽ được chuyển sang trang đăng nhập."
+            "Đăng ký thành công! Bạn sẽ được chuyển sang trang đăng nhập.",
           );
         } catch (error) {
           console.error(error);
@@ -42,8 +43,10 @@ export const useAuthStore = create<AuthState>()(
           set({ loading: false });
         }
       },
+
       signIn: async (username, password) => {
         try {
+          get().clearState();
           set({ loading: true });
           localStorage.clear();
           useChatStore.getState().reset();
@@ -109,6 +112,6 @@ export const useAuthStore = create<AuthState>()(
     {
       name: "auth-storage", // tên của storage
       partialize: (state) => ({ user: state.user }), // chỉ lưu user vào storage
-    }
-  )
+    },
+  ),
 );

@@ -20,81 +20,86 @@ const MessageItem: React.FC<MessageItemProps> = ({
   selectedConversation,
   lastMessageStatus,
 }) => {
-  const prev = messages[index - 1];
-  const isGroupBreak =
+  const prev = index + 1 < messages.length ? messages[index + 1] : undefined;
+
+  const isShowTime =
     index === 0 ||
-    message.senderId !== prev.senderId ||
-    new Date(message.createdAt).getTime() - new Date(prev.createdAt).getTime() >
+    new Date(message.createdAt).getTime() -
+      new Date(prev?.createdAt || 0).getTime() >
       5 * 60 * 1000; // 5 minutes
 
+  const isGroupBreak = isShowTime && message.senderId !== prev?.senderId;
+
   const participant = selectedConversation.participants.find(
-    (p: Participant) => p._id.toString() === message.senderId.toString()
+    (p: Participant) => p._id.toString() === message.senderId.toString(),
   );
 
   return (
-    <div
-      className={cn(
-        "flex gap-2 message-bounce mt-1",
-        message.isOwn ? "justify-end" : "justify-start"
-      )}
-    >
-      {/* Avatar */}
-      {!message.isOwn && (
-        <div className="w-8">
-          {isGroupBreak && (
-            <UserAvatar
-              type="chat"
-              name={participant?.displayName || "Unknown"}
-              avatarUrl={participant?.avatarUrl ?? undefined}
-            />
-          )}
-        </div>
+    <>
+      {/* Time */}
+      {isShowTime && (
+        <span className="flex justify-center text-xs text-muted-foreground px-1 py-2">
+          {formatMessageTime(new Date(message.createdAt))}
+        </span>
       )}
 
-      {/* Messages */}
       <div
         className={cn(
-          "max-w-xs lg:max-w-md space-y-1 flex flex-col",
-          message.isOwn ? "items-end" : "items-start"
+          "flex gap-2 message-bounce mt-1",
+          message.isOwn ? "justify-end" : "justify-start",
         )}
       >
-        <Card
-          className={cn(
-            "p-3",
-            message.isOwn
-              ? "bg-primary border-0 text-white"
-              : "bg-chat-bubble-received "
-          )}
-        >
-          <p className="text-sm leading-relaxed wrap-break-word">
-            {message.content}
-          </p>
-        </Card>
-
-        {/* Time */}
-        {isGroupBreak && (
-          <span className="text-xs text-muted-foreground px-1">
-            {formatMessageTime(new Date(message.createdAt))}
-          </span>
+        {/* Avatar */}
+        {!message.isOwn && (
+          <div className="w-8">
+            {isGroupBreak && (
+              <UserAvatar
+                type="chat"
+                name={participant?.displayName || "Unknown"}
+                avatarUrl={participant?.avatarUrl ?? undefined}
+              />
+            )}
+          </div>
         )}
 
-        {/* Seen or Delivered Status */}
-        {message.isOwn &&
-          message._id === selectedConversation.lastMessage?._id && (
-            <Badge
-              variant="outline"
-              className={cn(
-                "text-xs px-1.5 py-0.5 h-4 border-0",
-                lastMessageStatus === "Đã xem"
-                  ? "bg-primary/20 text-primary"
-                  : "bg-muted text-muted-foreground"
-              )}
-            >
-              {lastMessageStatus}
-            </Badge>   
+        {/* Messages */}
+        <div
+          className={cn(
+            "max-w-xs lg:max-w-md space-y-1 flex flex-col",
+            message.isOwn ? "items-end" : "items-start",
           )}
+        >
+          <Card
+            className={cn(
+              "p-3",
+              message.isOwn
+                ? "bg-primary border-0 text-white"
+                : "bg-chat-bubble-received ",
+            )}
+          >
+            <p className="text-sm leading-relaxed wrap-break-word">
+              {message.content}
+            </p>
+          </Card>
+
+          {/* Seen or Delivered Status */}
+          {message.isOwn &&
+            message._id === selectedConversation.lastMessage?._id && (
+              <Badge
+                variant="outline"
+                className={cn(
+                  "text-xs px-1.5 py-0.5 h-4 border-0",
+                  lastMessageStatus === "Đã xem"
+                    ? "bg-primary/20 text-primary"
+                    : "bg-muted text-muted-foreground",
+                )}
+              >
+                {lastMessageStatus}
+              </Badge>
+            )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
