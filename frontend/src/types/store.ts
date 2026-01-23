@@ -95,10 +95,17 @@ export interface ChatState {
 // Socket State
 export interface SocketState {
   socket: Socket | null;
-  
+
   onlineUsers: string[];
 
   connectSocket: () => void;
 
   disconnectSocket: () => void;
+}
+
+// Friend State
+export interface FriendState {
+  loading: boolean;
+  searchByUserName: (username: string) => Promise<User | null>;
+  addFriend: (to: string, message?: string) => Promise<string>;
 }
