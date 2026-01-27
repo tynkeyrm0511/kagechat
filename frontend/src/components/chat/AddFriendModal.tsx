@@ -92,10 +92,14 @@ const AddFriendModal = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button className="flex justify-center items-center size-6 rounded hover:bg-sidebar-accent cursor-pointer z-10 border-none bg-transparent outline-none">
+        <div
+          role="button"
+          tabIndex={0}
+          className="flex justify-center items-center size-6 rounded hover:bg-sidebar-accent cursor-pointer z-10 border-none bg-transparent outline-none"
+        >
           <UserPlus2 className="size-5" />
           <span className="sr-only">Thêm bạn</span>
-        </button>
+        </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] border-none">
         <DialogHeader>

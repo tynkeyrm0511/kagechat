@@ -12,9 +12,9 @@ const router = express.Router();
 // Gửi yêu cầu kết bạn
 router.post('/requests', sendFriendRequest);
 // Chấp nhận yêu cầu kết bạn
-router.post('/request/:requestId/accept', acceptFriendRequest);
+router.post('/requests/:requestId/accept', acceptFriendRequest);
 // Từ chối yêu cầu kết bạn
-router.post('/request/:requestId/decline', declineFriendRequest);
+router.post('/requests/:requestId/decline', declineFriendRequest);
 // Lấy danh sách bạn bè
 router.get('/', getFriends);
 // Lấy danh sách yêu cầu kết bạn

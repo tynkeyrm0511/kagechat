@@ -197,12 +197,12 @@ export const getFriendRequests = async (req, res) => {
       //Yêu cầu kết bạn đã gửi
       FriendRequest.find({ from: userId }).populate(
         "to",
-        "_id displayName avatarUrl"
+        "_id username displayName avatarUrl"
       ),
       //Yêu cầu kết bạn đã nhận
       FriendRequest.find({ to: userId }).populate(
         "from",
-        "_id displayName avatarUrl"
+        "_id username displayName avatarUrl"
       ),
     ]);
 
